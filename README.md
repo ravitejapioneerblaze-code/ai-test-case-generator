@@ -32,6 +32,10 @@ Manual test writing is time-consuming and requires technical expertise. This too
 
 ## Getting Started
 
+> ⚠️ **First time using this tool?**
+> Complete the [one-time setup guide](PREREQUISITES.md) first.
+> Takes approximately 15-20 minutes. Never needed again.
+
 ### Requirements
 
 - [Node.js](https://nodejs.org) (version 18 or above)

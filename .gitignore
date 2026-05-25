@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+
+# Build
+dist/
+
+# Test outputs
+output/
+allure-results/
+allure-report/
+playwright-report/
+test-results/
+
+# Empty folders
+ANTHROPIC_API_KEY (gitignored)/
+API integration/
+generation/
+Playwright page analy*/
+point/
+test files/
+
+# OS
+.DS_Store
+Thumbs.db

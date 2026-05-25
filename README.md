@@ -1,103 +1,170 @@
-# AI Test Case Generator
+# AI Test Generator
 
-An AI-powered test case generator that automatically analyzes web pages 
-and generates comprehensive test cases using Claude AI, Playwright, 
-and axe-core.
+A free, open-source tool that automatically generates and runs website tests using AI — no coding experience required.
 
-## Purpose
+Simply provide a website address, and the tool analyzes the page, generates comprehensive test cases, runs them, and produces a detailed report — all in one command.
 
-Manual test case creation is time-consuming and often incomplete. 
-This tool analyzes any web page and generates structured, actionable 
-test cases covering functional testing, accessibility compliance, 
-UI validation, edge cases, and API testing.
+---
 
-Built to improve software quality for government, healthcare, and 
-insurance web applications serving millions of Americans.
+## Why This Tool?
 
-## Features
+Manual test writing is time-consuming and requires technical expertise. This tool removes that barrier by letting AI do the heavy lifting — making quality testing accessible to everyone.
 
-- AI-powered page analysis using Claude API for intelligent test generation
-- Integrated axe-core scanning for WCAG 2.1 and Section 508 compliance
-- Playwright automation for capturing page structure and interactions
-- Multiple output formats: JSON, Markdown, and Playwright test scripts
-- Tested against US federal government websites and USWDS components
+---
 
-## Tech Stack
+## What It Does
 
-- Claude API (Anthropic)
-- Playwright
-- axe-core
-- Node.js / TypeScript
+- Analyzes any website automatically
+- Generates meaningful test cases using AI
+- Runs the tests against the live website
+- Produces a detailed visual report with pass/fail results
 
-## Installation
+---
 
+## Who Is It For?
+
+- Non-technical users who want to test their website
+- QA engineers looking to save time
+- Developers who want instant test coverage
+- Teams with no dedicated QA resources
+
+---
+
+## Getting Started
+
+### Requirements
+
+- [Node.js](https://nodejs.org) (version 18 or above)
+- [Ollama](https://ollama.com/download) (free local AI — no API key needed)
+- [Java](https://www.microsoft.com/openjdk) (for test reports)
+
+### Installation
+
+**1. Clone the repository**
 ```bash
 git clone https://github.com/ravitejapioneerblaze-code/ai-test-case-generator.git
 cd ai-test-case-generator
-npm install
 ```
+
+**2. Install dependencies**
+```bash
+npm install
+npx playwright install chromium
+```
+
+**3. Set up local AI**
+```bash
+ollama pull mistral
+```
+
+**4. Configure environment**
+```bash
+cp .env.example .env
+```
+
+**5. Run the tool**
+```bash
+npm start
+```
+
+**6. Enter your website address when prompted**
+That's it — the tool handles everything else automatically.
+
+---
+
+## What Happens Next
+
+| Step | What the tool does |
+|------|--------------------|
+| 1 | Opens and analyzes your website |
+| 2 | Generates test cases using AI |
+| 3 | Runs all tests automatically |
+| 4 | Opens a detailed test report |
+
+---
+
+## Supported AI Providers
+
+The tool works with multiple AI providers. Configure your preferred option in the `.env` file:
+
+| Provider | Cost | Setup |
+|----------|------|-------|
+| Ollama (default) | Free | Local, no account needed |
+| Anthropic Claude | Paid | API key required |
+| OpenAI GPT | Paid | API key required |
+
+---
 
 ## Configuration
 
-Create a `.env` file in the root directory:
+Copy `.env.example` to `.env` and set your preferences:
 
 ```env
-ANTHROPIC_API_KEY=your_claude_api_key_here
+# AI Provider: ollama, anthropic, or openai
+AI_PROVIDER=ollama
+
+# Ollama settings (free, local)
+OLLAMA_MODEL=mistral
+
+# Optional: only needed if using paid providers
+ANTHROPIC_API_KEY=
+ANTHROPIC_MODEL=claude-sonnet-4-5
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4o-mini
 ```
 
-## Usage
+---
 
-```bash
-# Generate test cases for any URL
-npm run generate -- --url https://example.com
+## Sample Output
 
-# Generate with accessibility focus
-npm run generate -- --url https://example.com --mode accessibility
+After running the tool, you will see a summary like this:
 
-# Output as Playwright test script
-npm run generate -- --url https://example.com --output playwright
-```
+Website analysis complete
+✅ Successfully created 8 test cases
+📋 Here is a summary of your generated tests:
 
-## Output Example
+Form Submission with Valid Inputs — Priority: 🔴 High
+Form Submission with Required Fields Empty — Priority: 🔴 High
+Button Interaction Testing — Priority: 🔴 High
+Navigation Testing — Priority: 🔴 High
+Input Field Validation — Priority: 🟡 Medium
+Heading Verification — Priority: 🟡 Medium
+Layout Verification — Priority: 🟡 Medium
+Edge Case Testing — Priority: 🟢 Low
 
-```json
-{
-  "url": "https://example.com",
-  "generated_at": "2026-05-23",
-  "test_cases": [
-    {
-      "id": "TC001",
-      "category": "Functional",
-      "title": "Verify navigation menu is accessible via keyboard",
-      "steps": [
-        "Navigate to the page",
-        "Press Tab key to focus on navigation",
-        "Verify all menu items are reachable via keyboard"
-      ],
-      "expected_result": "All navigation items accessible via keyboard",
-      "wcag_criteria": "2.1.1"
-    }
-  ]
-}
-```
+✅ All tests completed
 
-## Target Applications
+A full visual report opens automatically in your browser.
 
-- US federal government websites (USWDS, VA.gov, CMS, Login.gov)
-- Healthcare and insurance portals
-- Any public-facing web application
+---
+
+## Project Structure
+
+ai-test-case-generator/
+├── src/
+│   ├── scraper.ts        # Website analysis
+│   ├── analyzer.ts       # AI test generation
+│   ├── generator.ts      # Test file creation
+│   └── index.ts          # Main entry point
+├── output/               # Generated test files
+├── .env.example          # Configuration template
+├── playwright.config.ts  # Test runner configuration
+└── README.md
+
+---
 
 ## Contributing
 
-Contributions are welcome. Please submit a pull request with a 
-clear description of the change and any relevant test coverage.
+Contributions are welcome. Please open an issue or submit a pull request.
+
+---
 
 ## License
 
-MIT
+MIT License — free to use, modify, and distribute.
+
+---
 
 ## Author
 
-Raviteja Doppalapudi  
-Senior QA Automation and AI Engineer  
-github.com/ravitejapioneerblaze-code
+Built by an experienced Senior QA Automation and AI engineer , as an open source contribution to make quality testing accessible to Federal Websites.

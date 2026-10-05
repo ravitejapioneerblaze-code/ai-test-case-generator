@@ -56,3 +56,43 @@ describe('generatePlaywrightTests', () => {
     expect(content).toContain('beforeEach');
   });
 });
+describe('generatePlaywrightTests with untrusted AI output', () => {
+  const trickyCases = [
+    {
+      name: "User's login can't fail",
+      description: 'Line one\nline two',
+      steps: ['Open the page\nthen wait', "Click 'Sign in'"],
+      expectedResult: 'Redirect happens\n// not a comment injection',
+      priority: 'high' as const
+    }
+  ];
+
+  test('escapes single quotes in test names', () => {
+    const content = generatePlaywrightTests(trickyCases, mockPageData);
+    expect(content).toContain("test('[HIGH] User\\'s login can\\'t fail'");
+  });
+
+  test('keeps multi-line text inside comments', () => {
+    const content = generatePlaywrightTests(trickyCases, mockPageData);
+    expect(content).toContain('// Line one line two');
+    expect(content).toContain('// Expected: Redirect happens // not a comment injection');
+  });
+
+  test('escapes quotes in page titles and URLs', () => {
+    const content = generatePlaywrightTests([], {
+      ...mockPageData,
+      title: "Bob's Page",
+      url: "https://example.com/?q=it's"
+    });
+    expect(content).toContain("Generated tests for: Bob\\'s Page");
+    expect(content).toContain("page.goto('https://example.com/?q=it\\'s')");
+  });
+
+  test('produces a spec file that parses as valid TypeScript', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const ts = require('typescript');
+    const content = generatePlaywrightTests(trickyCases, mockPageData);
+    const result = ts.transpileModule(content, { reportDiagnostics: true });
+    expect(result.diagnostics).toHaveLength(0);
+  });
+});

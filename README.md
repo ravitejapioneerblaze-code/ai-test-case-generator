@@ -115,6 +115,9 @@ ANTHROPIC_API_KEY=
 ANTHROPIC_MODEL=claude-sonnet-4-5
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4o-mini
+
+# Set to false to watch the browser while the page is analysed
+HEADLESS=true
 ```
 
 ---
@@ -123,6 +126,7 @@ OPENAI_MODEL=gpt-4o-mini
 
 After running the tool, you will see a summary like this:
 
+```text
 Website analysis complete
 ✅ Successfully created 8 test cases
 📋 Here is a summary of your generated tests:
@@ -137,6 +141,7 @@ Layout Verification — Priority: 🟡 Medium
 Edge Case Testing — Priority: 🟢 Low
 
 ✅ All tests completed
+```
 
 A full visual report opens automatically in your browser.
 
@@ -163,22 +168,47 @@ of the United States government.
 
 ## Project Structure
 
+```text
 ai-test-case-generator/
 ├── src/
 │   ├── scraper.ts        # Website analysis
 │   ├── analyzer.ts       # AI test generation
 │   ├── generator.ts      # Test file creation
-│   └── index.ts          # Main entry point
+│   ├── index.ts          # Main entry point
+│   └── tests/            # Jest unit tests
 ├── output/               # Generated test files
 ├── .env.example          # Configuration template
 ├── playwright.config.ts  # Test runner configuration
 └── README.md
+```
+
+---
+
+## Development
+
+```bash
+npm run typecheck   # TypeScript checks
+npm run test:unit   # Jest unit tests (no network, Ollama or Java needed)
+```
+
+---
+
+## Roadmap
+
+Ideas that would make good contributions. Issues labelled `good first issue` are the best place to start.
+
+- More providers (Google Gemini, Azure OpenAI)
+- Smarter assertions in generated tests, replacing the `TODO` placeholders
+- Crawl multiple pages from a single run
+- Docker image so Java and Chromium do not need to be installed locally
+- Accessibility checks with axe-core
+- JSON and HTML report output as an alternative to Allure
 
 ---
 
 ## Contributing
 
-Contributions are welcome. Please open an issue or submit a pull request.
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code layout and the pull request process, and check the open issues for something to pick up.
 
 ---
 
@@ -190,4 +220,4 @@ MIT License — free to use, modify, and distribute.
 
 ## Author
 
-Built by an experienced Senior QA Automation and AI engineer , as an open source contribution to make quality testing accessible to Federal Websites.
+Built by an experienced Senior QA Automation and AI engineer , as an open source contribution to make quality testing accessible to Federal Websites.

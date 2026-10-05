@@ -24,8 +24,10 @@ export interface InputData {
 }
 
 export async function scrapePage(url: string): Promise<PageData> {
-  //const browser = await chromium.launch();
-  const browser = await chromium.launch({ headless: false, slowMo: 500 });
+  const browser = await chromium.launch({
+    headless: process.env.HEADLESS !== 'false',
+    slowMo: Number(process.env.SLOW_MO) || 0
+  });
   const page = await browser.newPage();
 
   try {
@@ -62,4 +64,4 @@ export async function scrapePage(url: string): Promise<PageData> {
   } finally {
     await browser.close();
   }
-}
+}

@@ -1,11 +1,12 @@
 {
   "name": "ai-test-case-generator",
   "version": "1.0.0",
-  "description": "An AI-powered test case generator that automatically analyzes web pages \r and generates comprehensive test cases using Claude AI, Playwright, \r and axe-core.",
+  "description": "Generate and run Playwright tests for any website using AI (Ollama, Anthropic or OpenAI), with Allure reports.",
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
     "generate": "ts-node src/index.ts",
+    "typecheck": "tsc --noEmit",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:unit": "jest",
@@ -16,16 +17,30 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "testMatch": ["**/tests/**/*.test.ts"],
-    "moduleFileExtensions": ["ts", "js"]
+    "testMatch": [
+      "**/tests/**/*.test.ts"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ]
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ravitejapioneerblaze-code/ai-test-case-generator.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "playwright",
+    "test-automation",
+    "ai-testing",
+    "llm",
+    "ollama",
+    "qa",
+    "typescript",
+    "allure"
+  ],
+  "author": "Raviteja Doppalapudi",
+  "license": "MIT",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/ravitejapioneerblaze-code/ai-test-case-generator/issues"

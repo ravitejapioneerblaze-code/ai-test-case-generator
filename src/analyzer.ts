@@ -102,6 +102,15 @@ export async function analyzeAndGenerateTests(pageData: PageData): Promise<TestC
     default:          raw = await callOllama(pageData);    break;
   }
 
+  return parseTestCases(raw);
+}
+
+/**
+ * Turns a raw model response into a list of test cases. Models often wrap the
+ * JSON in markdown fences or leave trailing commas, so this cleans the text
+ * first and falls back to extracting the first JSON array it can find.
+ */
+export function parseTestCases(raw: string): TestCase[] {
   const cleaned = raw
     .replace(/```json|```/g, '')
     .replace(/,\s*]/g, ']')

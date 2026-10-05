@@ -1,0 +1,42 @@
+name: Bug report
+description: Something is not working as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you see instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The command you ran and the website address (if it is public).
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: AI provider
+      options: [Ollama, Anthropic, OpenAI]
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      placeholder: mistral, claude-sonnet-4-5, gpt-4o-mini
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Node.js version and Playwright version.
+      placeholder: Windows 11, Node 20.11, Playwright 1.60
+  - type: textarea
+    id: logs
+    attributes:
+      label: Terminal output
+      description: Paste the full output. Remove any API keys first.
+      render: shell

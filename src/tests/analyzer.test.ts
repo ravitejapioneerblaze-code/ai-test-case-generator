@@ -113,6 +113,29 @@ describe('analyzeAndGenerateTests provider routing', () => {
     expect(fetchMock.mock.calls[0][0]).toBe('https://api.openai.com/v1/chat/completions');
   });
 
+  test('explains how to start Ollama when the connection is refused', async () => {
+    process.env.AI_PROVIDER = 'ollama';
+    process.env.OLLAMA_MODEL = 'mistral';
+    const networkError = Object.assign(new TypeError('fetch failed'), {
+      cause: { code: 'ECONNREFUSED' }
+    });
+    fetchMock.mockRejectedValue(networkError);
+
+    const promise = analyzeAndGenerateTests(pageData);
+
+    await expect(promise).rejects.toThrow('Could not connect to Ollama');
+    await expect(promise).rejects.toThrow('ECONNREFUSED');
+    await expect(promise).rejects.toThrow('ollama pull mistral');
+  });
+
+  test('tells the user to pull the model when Ollama returns 404', async () => {
+    process.env.AI_PROVIDER = 'ollama';
+    process.env.OLLAMA_MODEL = 'llama3';
+    fetchMock.mockResolvedValue({ ...mockResponse({}, false), status: 404 } as Response);
+
+    await expect(analyzeAndGenerateTests(pageData)).rejects.toThrow('ollama pull llama3');
+  });
+
   test('surfaces provider errors', async () => {
     process.env.AI_PROVIDER = 'ollama';
     fetchMock.mockResolvedValue(mockResponse({}, false));

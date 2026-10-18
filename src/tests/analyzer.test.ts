@@ -113,6 +113,55 @@ describe('analyzeAndGenerateTests provider routing', () => {
     expect(fetchMock.mock.calls[0][0]).toBe('https://api.openai.com/v1/chat/completions');
   });
 
+  test('calls the Gemini API when configured', async () => {
+    process.env.AI_PROVIDER = 'gemini';
+    process.env.GEMINI_API_KEY = 'test-key';
+    process.env.GEMINI_MODEL = 'gemini-test-model';
+    fetchMock.mockResolvedValue(
+      mockResponse({
+        candidates: [{ content: { parts: [{ text: JSON.stringify(sampleCases) }] } }]
+      })
+    );
+
+    const result = await analyzeAndGenerateTests(pageData);
+
+    expect(result).toEqual(sampleCases);
+    expect(fetchMock.mock.calls[0][0]).toBe(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-test-model:generateContent'
+    );
+    const headers = (fetchMock.mock.calls[0][1] as RequestInit).headers as Record<string, string>;
+    expect(headers['x-goog-api-key']).toBe('test-key');
+  });
+
+  test('joins multiple Gemini response parts', async () => {
+    process.env.AI_PROVIDER = 'gemini';
+    process.env.GEMINI_API_KEY = 'test-key';
+    const json = JSON.stringify(sampleCases);
+    fetchMock.mockResolvedValue(
+      mockResponse({
+        candidates: [{ content: { parts: [{ text: json.slice(0, 20) }, { text: json.slice(20) }] } }]
+      })
+    );
+
+    await expect(analyzeAndGenerateTests(pageData)).resolves.toEqual(sampleCases);
+  });
+
+  test('fails clearly when the Gemini API key is missing', async () => {
+    process.env.AI_PROVIDER = 'gemini';
+    delete process.env.GEMINI_API_KEY;
+
+    await expect(analyzeAndGenerateTests(pageData)).rejects.toThrow('GEMINI_API_KEY is not set');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  test('reports an empty Gemini response', async () => {
+    process.env.AI_PROVIDER = 'gemini';
+    process.env.GEMINI_API_KEY = 'test-key';
+    fetchMock.mockResolvedValue(mockResponse({ candidates: [] }));
+
+    await expect(analyzeAndGenerateTests(pageData)).rejects.toThrow('Gemini returned an empty response');
+  });
+
   test('explains how to start Ollama when the connection is refused', async () => {
     process.env.AI_PROVIDER = 'ollama';
     process.env.OLLAMA_MODEL = 'mistral';

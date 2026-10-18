@@ -108,6 +108,34 @@ async function callOpenAI(pageData: PageData): Promise<string> {
   return data.choices[0].message.content;
 }
 
+async function callGemini(pageData: PageData): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY is not set. Add it to your .env file to use the Gemini provider.');
+  }
+
+  const model = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey
+      },
+      body: JSON.stringify({ contents: [{ parts: [{ text: PROMPT(pageData) }] }] })
+    }
+  );
+  if (!response.ok) throw new Error(`Gemini error: ${response.statusText}`);
+
+  const data = await response.json() as {
+    candidates?: { content?: { parts?: { text?: string }[] } }[];
+  };
+  const text = data.candidates?.[0]?.content?.parts?.map(part => part.text ?? '').join('');
+  if (!text) throw new Error('Gemini returned an empty response. Please try again.');
+  return text;
+}
+
 export async function analyzeAndGenerateTests(pageData: PageData): Promise<TestCase[]> {
   const provider = (process.env.AI_PROVIDER || 'ollama').toLowerCase();
 
@@ -118,6 +146,7 @@ export async function analyzeAndGenerateTests(pageData: PageData): Promise<TestC
   switch (provider) {
     case 'anthropic': raw = await callAnthropic(pageData); break;
     case 'openai':    raw = await callOpenAI(pageData);    break;
+    case 'gemini':    raw = await callGemini(pageData);    break;
     case 'ollama':
     default:          raw = await callOllama(pageData);    break;
   }

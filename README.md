@@ -96,6 +96,7 @@ The tool works with multiple AI providers. Configure your preferred option in th
 | Ollama (default) | Free | Local, no account needed |
 | Anthropic Claude | Paid | API key required |
 | OpenAI GPT | Paid | API key required |
+| Google Gemini | Free tier / paid | API key required |
 
 ---
 
@@ -104,7 +105,7 @@ The tool works with multiple AI providers. Configure your preferred option in th
 Copy `.env.example` to `.env` and set your preferences:
 
 ```env
-# AI Provider: ollama, anthropic, or openai
+# AI Provider: ollama, anthropic, openai, or gemini
 AI_PROVIDER=ollama
 
 # Ollama settings (free, local)
@@ -115,6 +116,8 @@ ANTHROPIC_API_KEY=
 ANTHROPIC_MODEL=claude-sonnet-4-5
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4o-mini
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-3.8-flash
 
 # Set to false to watch the browser while the page is analysed
 HEADLESS=true
@@ -197,7 +200,7 @@ npm run test:unit   # Jest unit tests (no network, Ollama or Java needed)
 
 Ideas that would make good contributions. Issues labelled `good first issue` are the best place to start.
 
-- More providers (Google Gemini, Azure OpenAI)
+- More providers (Azure OpenAI, Mistral API)
 - Smarter assertions in generated tests, replacing the `TODO` placeholders
 - Crawl multiple pages from a single run
 - Docker image so Java and Chromium do not need to be installed locally

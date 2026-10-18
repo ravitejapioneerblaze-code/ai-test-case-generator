@@ -2,6 +2,7 @@ import inquirer from 'inquirer';
 import { scrapePage } from './scraper';
 import { analyzeAndGenerateTests } from './analyzer';
 import { generatePlaywrightTests, saveTestFile } from './generator';
+import { reportFatalError } from './errors';
 import * as dotenv from 'dotenv';
 import { execSync } from 'child_process';
 
@@ -71,4 +72,4 @@ async function main() {
   console.log('==========================================\n');
 }
 
-main().catch(console.error);
+main().catch(reportFatalError);

@@ -20,7 +20,7 @@ body:
     id: provider
     attributes:
       label: AI provider
-      options: [Ollama, Anthropic, OpenAI]
+      options: [Ollama, Anthropic, OpenAI, Gemini]
     validations:
       required: true
   - type: input

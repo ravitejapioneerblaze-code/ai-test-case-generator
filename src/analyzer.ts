@@ -40,14 +40,20 @@ Format:
   }
 ]`;
 
-const OLLAMA_BASE_URL = 'http://localhost:11434';
+const DEFAULT_OLLAMA_URL = 'http://localhost:11434';
+
+function getOllamaBaseUrl(): string {
+  const configured = (process.env.OLLAMA_URL ?? '').trim().replace(/\/+$/, '');
+  return configured || DEFAULT_OLLAMA_URL;
+}
 
 async function callOllama(pageData: PageData): Promise<string> {
   const model = process.env.OLLAMA_MODEL || 'mistral';
+  const baseUrl = getOllamaBaseUrl();
 
   let response: Response;
   try {
-    response = await fetch(`${OLLAMA_BASE_URL}/api/generate`, {
+    response = await fetch(`${baseUrl}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model, prompt: PROMPT(pageData), stream: false })
@@ -56,7 +62,7 @@ async function callOllama(pageData: PageData): Promise<string> {
     const reason = (error as { cause?: { code?: string } }).cause?.code
       ?? (error as Error).message;
     throw new Error(
-      `Could not connect to Ollama at ${OLLAMA_BASE_URL} (${reason}).\n` +
+      `Could not connect to Ollama at ${baseUrl} (${reason}).\n` +
       `Make sure Ollama is installed and running (open the Ollama app or run "ollama serve"), ` +
       `then download the model with "ollama pull ${model}".`
     );

@@ -110,6 +110,8 @@ AI_PROVIDER=ollama
 
 # Ollama settings (free, local)
 OLLAMA_MODEL=mistral
+# Optional: address of your Ollama server (default shown)
+OLLAMA_URL=http://localhost:11434
 
 # Optional: only needed if using paid providers
 ANTHROPIC_API_KEY=

@@ -3,7 +3,7 @@ import { scrapePage } from './scraper';
 import { analyzeAndGenerateTests } from './analyzer';
 import { generatePlaywrightTests, saveTestFile } from './generator';
 import { reportFatalError } from './errors';
-import { validateUrl } from './validation';
+import { assertProviderConfigured, validateUrl } from './validation';
 import * as dotenv from 'dotenv';
 import { execSync } from 'child_process';
 
@@ -16,6 +16,8 @@ async function main() {
   console.log('  Generation time may vary based on the');
   console.log('  size and complexity of your website.');
   console.log('==========================================\n');
+
+  assertProviderConfigured();
 
   const { url } = await inquirer.prompt([
     {

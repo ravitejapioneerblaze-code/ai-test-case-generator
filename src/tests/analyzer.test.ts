@@ -77,11 +77,42 @@ describe('analyzeAndGenerateTests provider routing', () => {
 
   test('uses Ollama by default', async () => {
     delete process.env.AI_PROVIDER;
+    delete process.env.OLLAMA_URL;
     fetchMock.mockResolvedValue(mockResponse({ response: JSON.stringify(sampleCases) }));
 
     const result = await analyzeAndGenerateTests(pageData);
 
     expect(result).toEqual(sampleCases);
+    expect(fetchMock.mock.calls[0][0]).toBe('http://localhost:11434/api/generate');
+  });
+
+  test('uses OLLAMA_URL for the request when set', async () => {
+    process.env.AI_PROVIDER = 'ollama';
+    process.env.OLLAMA_URL = 'http://ollama.internal:8080';
+    fetchMock.mockResolvedValue(mockResponse({ response: JSON.stringify(sampleCases) }));
+
+    await analyzeAndGenerateTests(pageData);
+
+    expect(fetchMock.mock.calls[0][0]).toBe('http://ollama.internal:8080/api/generate');
+  });
+
+  test('ignores a trailing slash in OLLAMA_URL', async () => {
+    process.env.AI_PROVIDER = 'ollama';
+    process.env.OLLAMA_URL = 'http://ollama.internal:8080/';
+    fetchMock.mockResolvedValue(mockResponse({ response: JSON.stringify(sampleCases) }));
+
+    await analyzeAndGenerateTests(pageData);
+
+    expect(fetchMock.mock.calls[0][0]).toBe('http://ollama.internal:8080/api/generate');
+  });
+
+  test('falls back to the default address when OLLAMA_URL is blank', async () => {
+    process.env.AI_PROVIDER = 'ollama';
+    process.env.OLLAMA_URL = '   ';
+    fetchMock.mockResolvedValue(mockResponse({ response: JSON.stringify(sampleCases) }));
+
+    await analyzeAndGenerateTests(pageData);
+
     expect(fetchMock.mock.calls[0][0]).toBe('http://localhost:11434/api/generate');
   });
 
@@ -175,6 +206,16 @@ describe('analyzeAndGenerateTests provider routing', () => {
     await expect(promise).rejects.toThrow('Could not connect to Ollama');
     await expect(promise).rejects.toThrow('ECONNREFUSED');
     await expect(promise).rejects.toThrow('ollama pull mistral');
+  });
+
+  test('shows the configured Ollama address in the connection error', async () => {
+    process.env.AI_PROVIDER = 'ollama';
+    process.env.OLLAMA_URL = 'http://ollama.internal:8080';
+    fetchMock.mockRejectedValue(new TypeError('fetch failed'));
+
+    await expect(analyzeAndGenerateTests(pageData)).rejects.toThrow(
+      'Could not connect to Ollama at http://ollama.internal:8080'
+    );
   });
 
   test('tells the user to pull the model when Ollama returns 404', async () => {

@@ -3,6 +3,7 @@ import { scrapePage } from './scraper';
 import { analyzeAndGenerateTests } from './analyzer';
 import { generatePlaywrightTests, saveTestFile } from './generator';
 import { reportFatalError } from './errors';
+import { validateUrl } from './validation';
 import * as dotenv from 'dotenv';
 import { execSync } from 'child_process';
 
@@ -22,11 +23,7 @@ async function main() {
       name: 'url',
       message: 'Enter the website address you want to test:',
       default: process.argv[2],
-      validate: (input: string) => {
-        if (!input) return 'Please enter a website address';
-        if (!input.startsWith('http')) return 'Please enter a valid website address starting with http:// or https://';
-        return true;
-      }
+      validate: validateUrl
     }
   ]);
 

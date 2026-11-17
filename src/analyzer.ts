@@ -142,6 +142,31 @@ async function callGemini(pageData: PageData): Promise<string> {
   return text;
 }
 
+async function callMistral(pageData: PageData): Promise<string> {
+  const apiKey = process.env.MISTRAL_API_KEY;
+  if (!apiKey) {
+    throw new Error('MISTRAL_API_KEY is not set. Add it to your .env file to use the Mistral provider.');
+  }
+
+  const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: process.env.MISTRAL_MODEL || 'mistral-small-latest',
+      messages: [{ role: 'user', content: PROMPT(pageData) }]
+    })
+  });
+  if (!response.ok) throw new Error(`Mistral error: ${response.statusText}`);
+
+  const data = await response.json() as { choices?: { message?: { content?: string } }[] };
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) throw new Error('Mistral returned an empty response. Please try again.');
+  return text;
+}
+
 export async function analyzeAndGenerateTests(pageData: PageData): Promise<TestCase[]> {
   const provider = (process.env.AI_PROVIDER || 'ollama').toLowerCase();
 
@@ -153,6 +178,7 @@ export async function analyzeAndGenerateTests(pageData: PageData): Promise<TestC
     case 'anthropic': raw = await callAnthropic(pageData); break;
     case 'openai':    raw = await callOpenAI(pageData);    break;
     case 'gemini':    raw = await callGemini(pageData);    break;
+    case 'mistral':   raw = await callMistral(pageData);   break;
     case 'ollama':
     default:          raw = await callOllama(pageData);    break;
   }

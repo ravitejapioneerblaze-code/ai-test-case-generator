@@ -40,7 +40,8 @@ describe('assertProviderConfigured', () => {
   test.each([
     ['anthropic', 'ANTHROPIC_API_KEY'],
     ['openai', 'OPENAI_API_KEY'],
-    ['gemini', 'GEMINI_API_KEY']
+    ['gemini', 'GEMINI_API_KEY'],
+    ['mistral', 'MISTRAL_API_KEY']
   ])('requires %s to have %s', (provider, keyName) => {
     expect(() => assertProviderConfigured({ AI_PROVIDER: provider })).toThrow(keyName);
     expect(() =>

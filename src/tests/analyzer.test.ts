@@ -193,6 +193,39 @@ describe('analyzeAndGenerateTests provider routing', () => {
     await expect(analyzeAndGenerateTests(pageData)).rejects.toThrow('Gemini returned an empty response');
   });
 
+  test('calls the Mistral API when configured', async () => {
+    process.env.AI_PROVIDER = 'mistral';
+    process.env.MISTRAL_API_KEY = 'test-key';
+    process.env.MISTRAL_MODEL = 'mistral-test-model';
+    fetchMock.mockResolvedValue(
+      mockResponse({ choices: [{ message: { content: JSON.stringify(sampleCases) } }] })
+    );
+
+    const result = await analyzeAndGenerateTests(pageData);
+
+    expect(result).toEqual(sampleCases);
+    expect(fetchMock.mock.calls[0][0]).toBe('https://api.mistral.ai/v1/chat/completions');
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    expect((init.headers as Record<string, string>)['Authorization']).toBe('Bearer test-key');
+    expect(JSON.parse(init.body as string).model).toBe('mistral-test-model');
+  });
+
+  test('fails clearly when the Mistral API key is missing', async () => {
+    process.env.AI_PROVIDER = 'mistral';
+    delete process.env.MISTRAL_API_KEY;
+
+    await expect(analyzeAndGenerateTests(pageData)).rejects.toThrow('MISTRAL_API_KEY is not set');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  test('reports an empty Mistral response', async () => {
+    process.env.AI_PROVIDER = 'mistral';
+    process.env.MISTRAL_API_KEY = 'test-key';
+    fetchMock.mockResolvedValue(mockResponse({ choices: [] }));
+
+    await expect(analyzeAndGenerateTests(pageData)).rejects.toThrow('Mistral returned an empty response');
+  });
+
   test('explains how to start Ollama when the connection is refused', async () => {
     process.env.AI_PROVIDER = 'ollama';
     process.env.OLLAMA_MODEL = 'mistral';

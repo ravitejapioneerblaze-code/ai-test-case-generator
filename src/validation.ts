@@ -3,7 +3,8 @@ export type ProviderEnv = Record<string, string | undefined>;
 const PROVIDER_KEYS: Record<string, string> = {
   anthropic: 'ANTHROPIC_API_KEY',
   openai: 'OPENAI_API_KEY',
-  gemini: 'GEMINI_API_KEY'
+  gemini: 'GEMINI_API_KEY',
+  mistral: 'MISTRAL_API_KEY'
 };
 
 // Value shipped in .env.example. Anyone who copies the file without editing it
